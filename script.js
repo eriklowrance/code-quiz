@@ -81,7 +81,7 @@ const questions = [
   },
 ];
 
-let timeRemaining = questions.length * 15;
+let timeRemaining = questions.length * 10;
 let questionIndex = 0;
 let timeId = 0;
 // register a click event handler
@@ -90,36 +90,37 @@ startBtn.addEventListener("click", function (e) {
   questionContainer.style.display = "block";
   //created variable to store current question
   displayQuestion();
+  countdown();
 
-  let choice = document.querySelector(".choice");
-  console.log(choice)
-  for (let i = 0; i < choice.length; i++) {
-    choice[i].addEventListener("click", function (e) {
-      e.preventDefault();
-      console.log('click')
+  // let choice = document.querySelector(".choice");
+  // console.log(choice)
+  // for (let i = 0; i < choice.length; i++) {
+  //   choice[i].addEventListener("click", function (e) {
+  //     e.preventDefault();
+  //     console.log('click')
 
-      var correctAnswerIndex = questions[questionIndex].correctIndex;
-      var correctAnswer =
-        questions[questionIndex].answers[correctAnswerIndex];
-      var userAnswer = this.textContent;
-      if (userAnswer === correctAnswer) {
-        document.querySelector("#answer-prompt").textContent = "Correct";
-      } else {
-        document.querySelector("#answer-prompt").textContent =
-          "Incorrect";
-        timeRemaining = timeRemaining - 10;
+  //     var correctAnswerIndex = questions[questionIndex].correctIndex;
+  //     var correctAnswer =
+  //       questions[questionIndex].answers[correctAnswerIndex];
+  //     var userAnswer = this.textContent;
+  //     if (userAnswer === correctAnswer) {
+  //       document.querySelector("#answer-prompt").textContent = "Correct";
+  //     } else {
+  //       document.querySelector("#answer-prompt").textContent =
+  //         "Incorrect";
+  //       timeRemaining = timeRemaining - 10;
 
-        //else remove 10 seconds from time, move to next question
-      }
-      clearInterval(timeId);
+  //       //else remove 10 seconds from time, move to next question
+  //     }
+  //     clearInterval(timeId);
 
-      //moves to next question
-      questionIndex++;
-      //pauses timer and displays answer right/wrong
-      setTimeout(displayQuestion, 2000);
-      //displays next question
-    });
-  }
+  //     //moves to next question
+  //     questionIndex++;
+  //     //pauses timer and displays answer right/wrong
+  //     setTimeout(displayQuestion, 2000);
+  //     //displays next question
+  //   });
+  // }
 });
 function displayQuestion() {
   document.querySelector("#answer-prompt").textContent = "";
@@ -151,12 +152,12 @@ function displayQuestion() {
 
         //else remove 10 seconds from time, move to next question
       }
-      clearInterval(timeId);
+      // clearInterval(timeId);
 
       //moves to next question
       questionIndex++;
       //pauses timer and displays answer right/wrong
-      setTimeout(displayQuestion, 2000);
+      setTimeout(displayQuestion, 1000);
       //displays next question
     });
     btn.textContent = answer;
@@ -165,10 +166,12 @@ function displayQuestion() {
 }
 // every second, takes one off countdown
 function countdown() {
-  timeId = setInterval(countdown, 1000);
-  timeRemaining--;
-  time.textContent = timeRemaining;
-  if (timeRemaining === 0) {
-    clearInterval(timeId);
-  }
+  timeId = setInterval(function() {
+    timeRemaining--;
+    time.textContent = timeRemaining;
+    if (timeRemaining === 0) {
+      clearInterval(timeId);
+    }
+
+  }, 1000);
 }
