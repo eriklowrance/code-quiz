@@ -12,20 +12,14 @@ const questions = [
     correctIndex: 0,
   },
   {
-    text:
-      "What is the name of the direwolf that Jon Snow adopted and raised?",
+    text: "What is the name of the direwolf that Jon Snow adopted and raised?",
     answers: ["Nymeria", "Ghost", "Lady", "Grey Wind"],
     correctIndex: 1,
   },
   {
     text:
       "In addition to Valyrian Steel, what is the only other substance that can kill a White Walker?",
-    answers: [
-      "Lava",
-      "Fire arrow to the heart",
-      "Dragonglass",
-      "Drowning",
-    ],
+    answers: ["Lava", "Fire arrow to the heart", "Dragonglass", "Drowning"],
     correctIndex: 2,
   },
   {
@@ -40,17 +34,11 @@ const questions = [
   },
   {
     text: "Which musical artist made a cameo in Game of Thrones?",
-    answers: [
-      "Ed Sheeran",
-      "Blake Shelton",
-      "Lady Gaga",
-      "Paul McCartney",
-    ],
+    answers: ["Ed Sheeran", "Blake Shelton", "Lady Gaga", "Paul McCartney"],
     correctIndex: 0,
   },
   {
-    text:
-      "Which of the following names does not belong to Daenerys' dragons?",
+    text: "Which of the following names does not belong to Daenerys' dragons?",
     answers: ["Drogon", "Viserion", "Venim", "Rhaegal"],
     correctIndex: 2,
   },
@@ -66,12 +54,7 @@ const questions = [
   },
   {
     text: "Who did Brienne of Tarth pledge her sword to?",
-    answers: [
-      "Jamie Lannister",
-      "Arya Stark",
-      "Sansa Stark",
-      "Catelyn Stark",
-    ],
+    answers: ["Jamie Lannister", "Arya Stark", "Sansa Stark", "Catelyn Stark"],
     correctIndex: 3,
   },
   {
@@ -80,7 +63,11 @@ const questions = [
     correctIndex: 2,
   },
 ];
-
+var players = localStorage.getItem("players")
+  ? JSON.parse(localStorage.getItem("players"))
+  : [];
+console.log(players);
+var initials = "";
 let timeRemaining = questions.length * 10;
 let questionIndex = 0;
 let timeId = 0;
@@ -91,40 +78,10 @@ startBtn.addEventListener("click", function (e) {
   //created variable to store current question
   displayQuestion();
   countdown();
-
-  // let choice = document.querySelector(".choice");
-  // console.log(choice)
-  // for (let i = 0; i < choice.length; i++) {
-  //   choice[i].addEventListener("click", function (e) {
-  //     e.preventDefault();
-  //     console.log('click')
-
-  //     var correctAnswerIndex = questions[questionIndex].correctIndex;
-  //     var correctAnswer =
-  //       questions[questionIndex].answers[correctAnswerIndex];
-  //     var userAnswer = this.textContent;
-  //     if (userAnswer === correctAnswer) {
-  //       document.querySelector("#answer-prompt").textContent = "Correct";
-  //     } else {
-  //       document.querySelector("#answer-prompt").textContent =
-  //         "Incorrect";
-  //       timeRemaining = timeRemaining - 10;
-
-  //       //else remove 10 seconds from time, move to next question
-  //     }
-  //     clearInterval(timeId);
-
-  //     //moves to next question
-  //     questionIndex++;
-  //     //pauses timer and displays answer right/wrong
-  //     setTimeout(displayQuestion, 2000);
-  //     //displays next question
-  //   });
-  // }
 });
 function displayQuestion() {
   document.querySelector("#answer-prompt").textContent = "";
-
+  timeId = setInterval(countdown, 1000);
   const currentQuestion = questions[questionIndex];
   //set the text content
   questionText.textContent = currentQuestion.text;
@@ -134,44 +91,81 @@ function displayQuestion() {
     const answer = currentQuestion.answers[i];
     const btn = document.createElement("button");
     btn.setAttribute("class", "btn btn-primary choice");
-    //maybe a fix?
-    btn.addEventListener('click', function (e) {
+    btn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log('click')
+      console.log("click");
 
       var correctAnswerIndex = questions[questionIndex].correctIndex;
-      var correctAnswer =
-        questions[questionIndex].answers[correctAnswerIndex];
+      var correctAnswer = questions[questionIndex].answers[correctAnswerIndex];
       var userAnswer = this.textContent;
       if (userAnswer === correctAnswer) {
         document.querySelector("#answer-prompt").textContent = "Correct";
       } else {
-        document.querySelector("#answer-prompt").textContent =
-          "Incorrect";
+        document.querySelector("#answer-prompt").textContent = "Incorrect";
         timeRemaining = timeRemaining - 10;
 
         //else remove 10 seconds from time, move to next question
       }
-      // clearInterval(timeId);
-
+      endCountdown()
       //moves to next question
-      questionIndex++;
+      if (questionIndex < 8) {
+        questionIndex++;
+        setTimeout(displayQuestion, 1000);
+      } else {
+        // initials = prompt(
+        //   "Game over! Your score was " +
+        //     timeRemaining +
+        //     "! Enter your initials!"
+        // );
+        document.querySelector("#highscore").style.display = "block";
+        document.querySelector("#question-container").style.display = "none";
+        
+
+   
+      }
       //pauses timer and displays answer right/wrong
-      setTimeout(displayQuestion, 1000);
       //displays next question
     });
     btn.textContent = answer;
     answerDiv.appendChild(btn);
   }
+  // every second, takes one off countdown
 }
-// every second, takes one off countdown
-function countdown() {
-  timeId = setInterval(function() {
-    timeRemaining--;
-    time.textContent = timeRemaining;
-    if (timeRemaining === 0) {
-      clearInterval(timeId);
-    }
+document.querySelector("#save").addEventListener("click", function() {
+  var player = {
+    highscore: timeRemaining,
+    userInitial: document.getElementById("init").value
+  };
+  console.log(player)
+  players.push(player);
 
-  }, 1000);
+  localStorage.setItem("players", JSON.stringify(players));
+
+  document.querySelector("#highscore").style.display= "none"
+  document.querySelector('#viewHigh').style.display= "block"
+  players =  JSON.parse(localStorage.getItem('players'))
+    
+  players = players.sort(function(a,b) {
+    return b.highscore - a.highscore
+  })
+
+    
+  console.log(players)
+  var highscore = players[0].highscore
+  var initial = players[0].userInitial
+
+  document.querySelector('#nameScore').textContent = highscore + " - " + initial
+})
+
+
+function countdown() {
+  timeRemaining--;
+  time.textContent = timeRemaining;
+  if (timeRemaining === 0) {
+    clearInterval(timeId);
+  }
+}
+
+function endCountdown() {
+  clearInterval(timeId);
 }
